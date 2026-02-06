@@ -1,0 +1,117 @@
+[
+  {
+    "week": 1,
+    "day": "Mon",
+    "eat": 3,
+    "play": 2,
+    "rest": 4,
+    "work": 1,
+    "exercise": 2,
+    "traits": {
+      "discipline": 6,
+      "sociability": 6,
+      "energy": 7,
+      "work_ethic": 6,
+      "playfulness": 6
+    },
+    "personality": {
+      "energy": "high",
+      "work_ethic": "high",
+      "sociability": "high",
+      "discipline": "high",
+      "background": "Well-raised with good routines"
+    }
+  },
+  {
+    "week": 1,
+    "day": "Tue",
+    "eat": 2,
+    "play": 3,
+    "rest": 3,
+    "work": 0,
+    "exercise": 1,
+    "traits": {
+      "discipline": 5,
+      "sociability": 7,
+      "energy": 6,
+      "work_ethic": 5,
+      "playfulness": 8
+    },
+    "personality": {
+      "energy": "high",
+      "work_ethic": "low",
+      "sociability": "high",
+      "discipline": "low",
+      "background": "Learned some bad habits due to neglect"
+    }
+  },
+  {
+    "week": 1,
+    "day": "Wed",
+    "eat": 4,
+    "play": 1,
+    "rest": 5,
+    "work": 2,
+    "exercise": 2,
+    "traits": {
+      "discipline": 6,
+      "sociability": 6,
+      "energy": 9,
+      "work_ethic": 8,
+      "playfulness": 7
+    },
+    "personality": {
+      "energy": "high",
+      "work_ethic": "high",
+      "sociability": "high",
+      "discipline": "high",
+      "background": "Well-raised with good routines"
+    }
+  },
+  {
+    "week": 1,
+    "day": "Thu",
+    "eat": 3,
+    "play": 1,
+    "rest": 4,
+    "work": 0,
+    "exercise": 1,
+    "traits": {
+      "discipline": 5,
+      "sociability": 7,
+      "energy": 10,
+      "work_ethic": 8,
+      "playfulness": 8
+    },
+    "personality": {
+      "energy": "high",
+      "work_ethic": "high",
+      "sociability": "high",
+      "discipline": "high",
+      "background": "Well-raised with good routines"
+    }
+  },
+  {
+    "week": 1,
+    "day": "Fri",
+    "eat": 3,
+    "play": 1,
+    "rest": 3,
+    "work": 0,
+    "exercise": 2,
+    "traits": {
+      "discipline": 4,
+      "sociability": 8,
+      "energy": 10,
+      "work_ethic": 9,
+      "playfulness": 9
+    },
+    "personality": {
+      "energy": "high",
+      "work_ethic": "high",
+      "sociability": "high",
+      "discipline": "low",
+      "background": "Well-raised with good routines"
+    }
+  }
+]
