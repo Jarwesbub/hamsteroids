@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
 {
     [Header("Pet")]
     [SerializeField] private PettingPhaseManager pettingManager;
+    [SerializeField] private PetController petController;
 
     [Header("UI Buttons")]
     [SerializeField] private Button eatButton;
@@ -39,12 +40,15 @@ public class GameController : MonoBehaviour
     [SerializeField] private TMP_Text currentDayText;
     [SerializeField] private TMP_Text dailyActivityCountText;
 
+    private DayNightCycle dayNightCycle;
+
     public Day today = Day.Monday;
     public int week = 1;
     public int dailyActivityCount = 0;
     private int maxDailyActivities = 5;
     private bool isDayEnded = false;
-    private List<string> dailyActivities = new List<string>();
+    private bool isPetActive = false;
+    private List<string> dailyActivities;
 
     private void Awake()
     {
@@ -54,11 +58,34 @@ public class GameController : MonoBehaviour
         restButton.onClick.AddListener(() => OnActivityClicked(Activity.Rest));
         studyButton.onClick.AddListener(() => OnActivityClicked(Activity.Study));
         exerciseButton.onClick.AddListener(() => OnActivityClicked(Activity.Exercise));
-        
+
         // Subscribe to day completed event
         if (pettingManager != null)
         {
             pettingManager.OnDayCompleted.AddListener(OnDayCompleted);
+        }
+        dayNightCycle = GetComponent<DayNightCycle>();
+
+        // Initialize daily activities for the current day
+        dailyActivities = new List<string>();
+
+        // Load saved game data and restore day/week
+        GameData gameData = SaveManager.Instance.GetGameData();
+        if (gameData != null && gameData.dayHistory.Count > 0)
+        {
+            DayData lastDay = gameData.dayHistory[gameData.dayHistory.Count - 1];
+            
+            // Parse the day string back to enum
+            if (System.Enum.TryParse(lastDay.day, out Day savedDay))
+            {
+                today = savedDay;
+            }
+            week = lastDay.week;
+            Debug.Log($"Loaded game state: Week {week} - {today}");
+        }
+        else
+        {
+            Debug.Log("No saved data found. Starting fresh.");
         }
     }
 
@@ -75,35 +102,62 @@ public class GameController : MonoBehaviour
     {
         Debug.Log($"Today is {today}");
         Debug.Log($"Save file location: {Application.persistentDataPath}");
+        // Update new day.
+        if (today == Day.Sunday)
+        {
+            today = Day.Monday;
+            week++;
+        }
+        else
+        {
+            today++;
+        }
         UpdateUITexts();
     }
 
     private void OnActivityClicked(Activity activity)
     {
-        if(pettingManager != null && pettingManager.isPetInCoolDown())
+        if (pettingManager != null && pettingManager.isPetInCoolDown())
         {
             Debug.Log("Pet is in cooldown. Please wait until the next day.");
+            return;
+        }
+        else if (isPetActive)
+        {
+            Debug.Log("Pet is moving. Please wait until it reaches its destination.");
             return;
         }
 
         Debug.Log($"Activity clicked: {activity}");
 
-        switch(activity)
-        {
-            case Activity.Eat: dailyActivities.Add("eat"); break;
-            case Activity.Play: dailyActivities.Add("play"); break;
-            case Activity.Rest: dailyActivities.Add("rest"); break;
-            case Activity.Study: dailyActivities.Add("study"); break;
-            case Activity.Exercise: dailyActivities.Add("exercise"); break;
-        }
+        isPetActive = true;
 
+        switch (activity)
+        {
+            case Activity.Eat: dailyActivities.Add("eat"); petController.Eat(ActivityCompleted); break;
+            case Activity.Play: dailyActivities.Add("play"); petController.Play(ActivityCompleted); break;
+            case Activity.Rest: dailyActivities.Add("rest"); petController.MoveToRest(ActivityCompleted); break;
+            case Activity.Study: dailyActivities.Add("study"); petController.MoveToStudy(ActivityCompleted); break;
+            case Activity.Exercise: dailyActivities.Add("exercise"); petController.Exercise(ActivityCompleted); break;
+        }
+    }
+
+    private void ActivityCompleted()
+    {
+        Debug.Log("Activity completed by pet.");
         dailyActivityCount++;
         UpdateUITexts();
+
+
 
         if (dailyActivityCount >= maxDailyActivities)
         {
             Debug.Log("Max daily activities reached. Moving to next day.");
             DayEnds();
+        }
+        else
+        {
+            isPetActive = false;
         }
     }
 
@@ -111,26 +165,33 @@ public class GameController : MonoBehaviour
     {
         isDayEnded = true;
 
-        if(pettingManager != null)
+        dayNightCycle.SetNightCycle();
+
+        if (petController != null)
         {
-            // Pass day, week to PettingPhaseManager - it handles the rest
-            pettingManager.OnMultipleActivitiesCompleted(dailyActivities, today.ToString(), week);
+            petController.MoveToSleep(() => OnPetReachedBed());
         }
-        
-        dailyActivities.Clear();
+        else
+        {
+            OnPetReachedBed();
+        }
     }
+
 
     // New method called when AI response completes
     private void OnDayCompleted()
     {
         Debug.Log("AI response completed. Updating to next day.");
-        UpdateDay();
+        dayNightCycle.SetDayCycle();
+        petController.PetWakeUp(() => OnPetWakeUp());
+
     }
 
-    public void UpdateDay()
+    public void UpdateNewDay()
     {
         dailyActivityCount = 0;
         isDayEnded = false;
+        isPetActive = false;
 
         if (today == Day.Sunday)
         {
@@ -142,7 +203,36 @@ public class GameController : MonoBehaviour
             today++;
         }
 
+
         UpdateUITexts();
+
+
+    }
+
+    // Pet Actions:
+
+    private void OnPetWakeUp()
+    {
+        Debug.Log("Pet woke up. Ready for a new day!");
+        UpdateNewDay();
+    }
+
+
+    private void OnPetReachedBed()
+    {
+        Debug.Log("Pet reached bed. Processing day activities...");
+
+        if (pettingManager != null)
+        {
+            // Pass day, week to PettingPhaseManager - it handles the rest
+            pettingManager.OnMultipleActivitiesCompleted(dailyActivities, today.ToString(), week);
+        }
+        else
+        {
+            UpdateNewDay();
+        }
+
+        dailyActivities.Clear();
     }
 
     private void UpdateUITexts()
@@ -157,4 +247,5 @@ public class GameController : MonoBehaviour
             currentDayText.text = $"Week {week} - {today}";
         }
     }
+
 }
