@@ -40,6 +40,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private TMP_Text currentDayText;
     [SerializeField] private TMP_Text dailyActivityCountText;
 
+    [SerializeField] private TMP_Text statsText;
+
     private DayNightCycle dayNightCycle;
 
     public Day today = Day.Monday;
@@ -245,6 +247,49 @@ public class GameController : MonoBehaviour
         if (currentDayText != null)
         {
             currentDayText.text = $"Week {week} - {today}";
+        }
+
+        if(statsText != null)
+        {
+            GameData gameData = SaveManager.Instance.GetGameData();
+            
+            if (gameData != null && gameData.dayHistory.Count > 0)
+            {
+                int totalEat = 0;
+                int totalPlay = 0;
+                int totalRest = 0;
+                int totalStudy = 0;
+                int totalExercise = 0;
+                int totalDays = gameData.dayHistory.Count;
+
+                string lifeStyle = week switch
+                {
+                    1 => "Child", 
+                    2 => "Teenager", 
+                    _ => "Adult"
+                };
+
+                foreach (DayData day in gameData.dayHistory)
+                {
+                    totalEat += day.eat;
+                    totalPlay += day.play;
+                    totalRest += day.rest;
+                    totalStudy += day.study;
+                    totalExercise += day.exercise;
+                }
+
+                statsText.text = $"Total Stats (across {totalDays} days):\n" +
+                                 $"Eat: {totalEat}\n" +
+                                 $"Play: {totalPlay}\n" +
+                                 $"Rest: {totalRest}\n" +
+                                 $"Study: {totalStudy}\n" +
+                                 $"Exercise: {totalExercise}\n" +
+                                 $"Life Stage: {lifeStyle}";
+            }
+            else
+            {
+                statsText.text = "No stats yet - complete your first day!";
+            }
         }
     }
 
