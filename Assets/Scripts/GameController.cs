@@ -48,7 +48,6 @@ public class GameController : MonoBehaviour
     public int week = 1;
     public int dailyActivityCount = 0;
     private int maxDailyActivities = 5;
-    private bool isDayEnded = false;
     private bool isPetActive = false;
     private List<string> dailyActivities;
 
@@ -165,7 +164,6 @@ public class GameController : MonoBehaviour
 
     public void DayEnds()
     {
-        isDayEnded = true;
 
         dayNightCycle.SetNightCycle();
 
@@ -192,7 +190,6 @@ public class GameController : MonoBehaviour
     public void UpdateNewDay()
     {
         dailyActivityCount = 0;
-        isDayEnded = false;
         isPetActive = false;
 
         if (today == Day.Sunday)
