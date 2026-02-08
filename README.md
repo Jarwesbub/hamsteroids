@@ -4,6 +4,6 @@ The player interacts with an alien hamster and guides its behavior by reinforcin
 
 The demo integrates Neocortex AI tools through an in-game chatbox to support adaptive behavior and experimentation with AI-driven interaction. This project was developed during the Supercell Global AI Hackathon over a single weekend.
 
-![Hamsteroids concept art 1](Assets\Sprites\Art\hamsteroids_concept_art.png)
+![Hamsteroids concept art 1](Assets/Sprites/Art/hamsteroids_concept_art.png)
 
-![Hamsteroids concept art 2](Assets\Sprites\Art\hamsteroids_concept_art_2.png)
+![Hamsteroids concept art 2](Assets/Sprites/Art/hamsteroids_concept_art_2.png)
