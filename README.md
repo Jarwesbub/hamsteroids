@@ -9,8 +9,7 @@ The demo integrates Neocortex AI tools through an in-game chatbox to support ada
 
 ![Hamsteroids picture](Assets/Sprites/Art/hamsteroids_pic.png)
 
-
-
+_______________________________________________________________________________
 
 **Demo video:**
 
